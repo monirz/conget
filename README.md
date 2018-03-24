@@ -3,8 +3,12 @@ Conget is a CLI app which is a concurrent file downloader  that download the fil
 
 ## Install
 Get the dependency with 'dep'
+
 `$ dep ensure`
-If you don't have `dep` installed, This app has only one dependency right now `github.com/urfave/cli` so you can just get it with `go get github.com/urfave/cli`.
+
+If you don't have `dep` installed, this app has only one dependency right now `github.com/urfave/cli` so you can just get it with 
+
+`go get github.com/urfave/cli`.
 
 And run this  
 
