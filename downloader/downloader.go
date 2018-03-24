@@ -111,12 +111,13 @@ type ByteReader struct {
 }
 
 func (b ByteReader) Read(p []byte) (int, error) {
+	chunkStartTime := time.Now()
 	n, err := b.Reader.Read(p)
-	end := time.Now()
-	timeDifference := end.Sub(b.t).Seconds()
-	b.t = end
+	chunkEndTime := time.Now()
+	timeDifference := chunkEndTime.Sub(chunkStartTime).Seconds()
 
 	transferSpeed := float64(n) / timeDifference
+
 	b.progress.UpdateProgress(n, transferSpeed)
 
 	return n, err
@@ -212,8 +213,7 @@ func Start(url string, limit int) error {
 			pi.TotalBytes = int64(totalBytes)
 			pis.Members[int64(i)] = pi
 
-			prevTime := time.Now()
-			br := &ByteReader{Reader: resp.Body, progress: pi, t: prevTime}
+			br := &ByteReader{Reader: resp.Body, progress: pi}
 
 			_, err = f.Seek(int64(min), 0)
 

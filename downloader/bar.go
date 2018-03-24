@@ -53,9 +53,9 @@ func (b *Bar) generate(width int) string {
 	}
 
 	counts := fmt.Sprintf("%3d", b.Val)
-	// KiB := int64(b.TransferRate) / 1024.0
+	KiB := int64(b.TransferRate) / 1024
 	// log.Println(b.TransferRate)
-	tr := fmt.Sprintf("%10d%s", int64(b.TransferRate), "KB/s")
+	tr := fmt.Sprintf("%10d%s", KiB, "KB/s")
 	barwidth := width - 60
 
 	if barwidth < 0 {
