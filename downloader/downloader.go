@@ -267,8 +267,7 @@ func Start(url string, limit int) error {
 	}()
 
 	//TODO handle error properly from error channel
-	<-errch
-	log.Println(errch)
+
 	wg.Wait()
 
 	log.Println("download done!")
