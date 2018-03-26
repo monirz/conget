@@ -32,9 +32,8 @@ func getTermSize() tsize {
 	return size
 }
 
-func New(name string, max int, transferRate float64) *Bar {
+func New(max int, transferRate float64) *Bar {
 	return &Bar{
-		Name:         name,
 		Max:          max,
 		TransferRate: transferRate,
 	}

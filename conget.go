@@ -48,8 +48,8 @@ func main() {
 			url = c.String("url")
 		}
 
-		if c.Int("concurrency") > 0 {
-			concurrentProcessNumber = c.Int("concurrency")
+		if c.Int("cuncurrency") > 0 {
+			concurrentProcessNumber = c.Int("cuncurrency")
 		} else {
 			concurrentProcessNumber = 10
 		}

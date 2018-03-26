@@ -35,7 +35,6 @@ type ProgressIndicator struct {
 // , describing the overall set of indicators on the terminal
 type ProgressIndicators struct {
 	// indicator members
-	// map is map[id]member
 	Members []*ProgressIndicator
 	// cursor position of the very top progress line
 	TopCursorPosition int64
@@ -58,10 +57,8 @@ func (pi *ProgressIndicator) PrintProgress() {
 
 	if pi.TotalBytes >= pi.BytesRead {
 		// fmt.Printf("\r%v KiB/s\n", KiB)
-		b := New("world", int(pi.TotalBytes), pi.TransferRate)
+		b := New(int(pi.TotalBytes), pi.TransferRate)
 		bars := NewBars(b)
-		// b2 := New("mars", 7000)
-		// bars.Add(b2)
 
 		bars.Render(int(pi.BytesRead))
 		if pi.TotalBytes == pi.BytesRead {
@@ -74,6 +71,7 @@ func (pi *ProgressIndicator) PrintProgress() {
 // PrintProgress causes a ProgressIndicators struct to trigger the printing
 // of current progress information for all its members
 func (pis *ProgressIndicators) PrintProgress() {
+
 	countDone := 0
 	for _, member := range pis.Members {
 		if member != nil {
@@ -92,7 +90,7 @@ func (pis *ProgressIndicators) PrintProgress() {
 
 	if !pis.Done {
 		// fmt.Fprintf(os.Stdout, "%c[2K", 27)      // clear the line
-		fmt.Printf("\x1b[%dA", 10)
+		fmt.Printf("\x1b[%dA", len(pis.Members))
 	} else {
 		fmt.Println(" ")
 		log.Println("finished downloading all chunk")
@@ -256,7 +254,7 @@ func Start(url string, limit int) error {
 					pis.PrintProgress()
 				}
 			case <-c:
-				fmt.Printf("\x1b[%dB", 10)
+				fmt.Printf("\x1b[%dB", len(pis.Members))
 				fmt.Printf("Download cancelled!\n")
 				os.Exit(1)
 			case <-stop:
