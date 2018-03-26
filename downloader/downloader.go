@@ -251,7 +251,9 @@ func Start(url string, limit int) error {
 					stop <- true
 					wg.Done()
 				} else {
-					pis.PrintProgress()
+					if len(pis.Members) == limit {
+						pis.PrintProgress()
+					}
 				}
 			case <-c:
 				fmt.Printf("\x1b[%dB", len(pis.Members))
