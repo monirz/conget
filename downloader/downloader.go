@@ -8,6 +8,7 @@ import (
 	"net/http"
 	"os"
 	"os/signal"
+	"path"
 	"strconv"
 	"sync"
 	"syscall"
@@ -133,13 +134,20 @@ func Start(url string, limit int) error {
 		return err
 	}
 
-	contentDisposition := h.Header["Content-Disposition"][0]
-	_, params, err := mime.ParseMediaType(contentDisposition)
-	if err != nil {
-		return err
+	var fileName string
+
+	if contentDisposition, ok := h.Header["Content-Disposition"]; ok {
+
+		_, params, err := mime.ParseMediaType(contentDisposition[0])
+		if err != nil {
+			return err
+		}
+
+		fileName = params["filename"]
+	} else {
+		fileName = path.Base(url)
 	}
 
-	filename := params["filename"]
 	length, err := strconv.Atoi(h.Header["Content-Length"][0])
 
 	if err != nil {
@@ -154,14 +162,14 @@ func Start(url string, limit int) error {
 	pis := new(ProgressIndicators)
 	pis.Members = make([]*ProgressIndicator, limit)
 
-	_, err = os.Create(filename)
+	_, err = os.Create(fileName)
 
 	if err != nil {
 		return err
 	}
 
 	wg.Add(limit)
-	errch := make(chan error)
+	errch := make(chan error, limit)
 
 	for i := 0; i < limit; i++ {
 		min := chunk * i
@@ -196,14 +204,12 @@ func Start(url string, limit int) error {
 				return
 			}
 
-			f, err := os.OpenFile(filename, os.O_RDWR, 0644)
+			f, err := os.OpenFile(fileName, os.O_RDWR, 0644)
 
 			if err != nil {
 				errch <- err
 				return
 			}
-			defer f.Close()
-
 			defer f.Close()
 
 			// setup progress bar
@@ -224,6 +230,7 @@ func Start(url string, limit int) error {
 				errch <- err
 				return
 			}
+			// errch <- nil
 
 			// wg.Done()
 			select {
