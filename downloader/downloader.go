@@ -139,11 +139,15 @@ func Start(url string, limit int) error {
 	if contentDisposition, ok := h.Header["Content-Disposition"]; ok {
 
 		_, params, err := mime.ParseMediaType(contentDisposition[0])
-		if err != nil {
-			return err
+
+		if err == nil {
+			if fname, ok := params["filename"]; ok {
+				fileName = fname
+			}
+		} else {
+			fileName = path.Base(url)
 		}
 
-		fileName = params["filename"]
 	} else {
 		fileName = path.Base(url)
 	}
