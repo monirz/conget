@@ -186,7 +186,13 @@ func Start(url string, limit int) error {
 		go func(min int, max int, i int, url string) {
 
 			client := &http.Client{}
-			req, _ := http.NewRequest("GET", url, nil)
+			req, err := http.NewRequest("GET", url, nil)
+
+			if err != nil {
+				errch <- err
+				wg.Done()
+				return
+			}
 
 			rangeHeader := "bytes=" + strconv.Itoa(min) + "-" + strconv.Itoa(max-1)
 			req.Header.Add("Range", rangeHeader)
@@ -196,8 +202,8 @@ func Start(url string, limit int) error {
 			resp, err := client.Do(req)
 
 			if err != nil {
-				// log.Println("%v", err)
 				errch <- err
+				wg.Done()
 				return
 			}
 
@@ -205,6 +211,7 @@ func Start(url string, limit int) error {
 
 			if err != nil {
 				errch <- err
+				wg.Done()
 				return
 			}
 
@@ -212,6 +219,7 @@ func Start(url string, limit int) error {
 
 			if err != nil {
 				errch <- err
+				wg.Done()
 				return
 			}
 			defer f.Close()
@@ -227,22 +235,18 @@ func Start(url string, limit int) error {
 
 			if err != nil {
 				errch <- err
+				wg.Done()
 				return
 			}
 			_, err = io.Copy(f, br)
 			if err != nil {
 				errch <- err
-				return
-			}
-			// errch <- nil
-
-			// wg.Done()
-			select {
-			case <-errch:
-				return
-			default:
 				wg.Done()
+				return
 			}
+			errch <- nil
+
+			wg.Done()
 
 			// log.Printf("%v %v", i, " chunk download done")
 
@@ -278,6 +282,15 @@ func Start(url string, limit int) error {
 	}()
 
 	//TODO handle error properly from error channel
+
+	for i := 0; i < limit; i++ {
+		select {
+		case err := <-errch:
+			if err != nil {
+				fmt.Printf("Error: %v\n", err.Error())
+			}
+		}
+	}
 
 	wg.Wait()
 
