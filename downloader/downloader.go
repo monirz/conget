@@ -198,10 +198,15 @@ func Start(url string, limit int) error {
 			req.Header.Add("Range", rangeHeader)
 
 			totalBytes := max - min
+			// setup progress bar
+			pi := new(ProgressIndicator)
+			pi.TotalBytes = int64(totalBytes)
+			pis.Members[int64(i)] = pi
 
 			resp, err := client.Do(req)
 
 			if err != nil {
+				pi.Done = true
 				errch <- err
 				wg.Done()
 				return
@@ -209,37 +214,29 @@ func Start(url string, limit int) error {
 
 			defer resp.Body.Close()
 
-			if err != nil {
-				errch <- err
-				wg.Done()
-				return
-			}
-
 			f, err := os.OpenFile(fileName, os.O_RDWR, 0644)
 
 			if err != nil {
+				pi.Done = true
 				errch <- err
 				wg.Done()
 				return
 			}
 			defer f.Close()
 
-			// setup progress bar
-			pi := new(ProgressIndicator)
-			pi.TotalBytes = int64(totalBytes)
-			pis.Members[int64(i)] = pi
-
 			br := &ByteReader{Reader: resp.Body, progress: pi}
 
 			_, err = f.Seek(int64(min), 0)
 
 			if err != nil {
+				pi.Done = true
 				errch <- err
 				wg.Done()
 				return
 			}
 			_, err = io.Copy(f, br)
 			if err != nil {
+				pi.Done = true
 				errch <- err
 				wg.Done()
 				return
@@ -283,18 +280,27 @@ func Start(url string, limit int) error {
 
 	//TODO handle error properly from error channel
 
+	var errs []error
+
 	for i := 0; i < limit; i++ {
 		select {
 		case err := <-errch:
 			if err != nil {
-				fmt.Printf("Error: %v\n", err.Error())
+				errs = append(errs, err)
 			}
 		}
 	}
 
 	wg.Wait()
 
-	log.Println("download done!")
+	if len(errs) > 0 {
+		for _, err := range errs {
+			fmt.Println(err)
+		}
+		fmt.Println("Status: Failed downloading all the chunks")
+	}
+
+	fmt.Println("Status: Download done!")
 
 	return nil
 
