@@ -1,12 +1,12 @@
 # Conget
-Conget is a CLI tool, which downloads file data concurrently by splitting the data into several chunks and fetch it asynchronously.
+Conget is a CLI application, which downloads file data concurrently by splitting the data into several chunks and fetch those asynchronously.
 
 ## Install & Build
 
-Conget uses [Cobra](https://github.com/spf13/cobra) for handling .     
+Conget uses [Cobra](https://github.com/spf13/cobra) for handling command line interaction.     
 Get the dependency with `go mod`
 
-###Build with Makefile 
+### Build with Makefile 
 
 To compile and build the binary file, run this command. it will build the binary in bin/ directory with the name conget.
 
