@@ -1,10 +1,13 @@
 # Conget
-Conget is a CLI app which is a concurrent file downloader  that download the file data by splitting into several chunks and fetch the data asynchronously.
+Conget is a CLI tool, which downloads file data concurrently by splitting the data into several chunks and fetch it asynchronously.
 
 ## Install & Build
+
+Conget uses [Cobra](https://github.com/spf13/cobra) for handling .     
 Get the dependency with `go mod`
 
-**Build with Makefile** 
+###Build with Makefile 
+
 To compile and build the binary file, run this command. it will build the binary in bin/ directory with the name conget.
 
 ```sh
@@ -16,12 +19,12 @@ Or for  Mac
 $ make build-mac
 ```
 
-To clean the compiled binary file 
+To remove the compiled binary file. 
 
 ```sh 
 $ make clean 
 ```
-It will remove all the binary file 
+It will remove all the binary file. 
 
 For running tests. 
 
@@ -29,9 +32,9 @@ For running tests.
 $ make test 
 ```
 
-**Installing or running it without Go**
+###Installing or running it without Go
 
-Clone the repo or just get the `conget` file and run it like this `./conget` or if you want to run it as global command just move the file to your `/usr/local/bin`.
+Binary file of latest build is pushed in the bin/ directory, download the file according to your OS and run the command `./conget`    
 
 
 ## Usage
@@ -47,5 +50,11 @@ $ conget -c 12 -u  http://example.com/example.mp4
 **Note**
 It downloads the file in current directory where you run the command.
 
-### Contribution
-It's still in experimental phase, so if you think anything could be improved or fixed just send the PR.  
+# Contributing
+
+1. Fork it
+2. Create your feature branch (`git checkout -b my-new-feature`)
+3. Make changes and add them (`git add .`)
+4. Commit your changes (`git commit -m 'Added some feature'`)
+5. Push to the branch (`git push origin my-new-feature`)
+6. Create new pull request
