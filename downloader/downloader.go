@@ -272,7 +272,7 @@ func Start(url string, limit int) error {
 				fmt.Printf("Download cancelled!\n")
 				os.Exit(1)
 			case <-stop:
-				log.Println("debug stop")
+				// log.Println("debug stop")
 				return
 			}
 		}

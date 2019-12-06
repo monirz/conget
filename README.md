@@ -2,19 +2,9 @@
 Conget is a CLI app which is a concurrent file downloader  that download the file data by splitting into several chunks and fetch the data asynchronously.
 
 ## Install
-Get the dependency with 'dep'
+Get the dependency with `go mod`
 
-`$ dep ensure`
-
-If you don't have `dep` installed, this app has only one dependency right now `github.com/urfave/cli` so you can just get it with 
-
-`go get github.com/urfave/cli`.
-
-And run this  
-
-`$ go install`
-
-If you have added go bin diretory to your $GOPATH, Just like this: `PATH="$GOPATH/bin:$PATH"` then you can just run `conget` command from anywhere on your terminal.
+If you have added go bin diretory to your $GOPATH, just like this: `PATH="$GOPATH/bin:$PATH"` then you can run `conget` command from anywhere on your terminal.
 Or you may have to move the compiled binary file from `$GOPATH/bin` to `/usr/local/bin` to run it globally.   
 
 **Installing or running it without Go**
